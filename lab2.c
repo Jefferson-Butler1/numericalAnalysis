@@ -9,7 +9,7 @@ int main()
     int degree, i;
     complex double poly[MAX_DEGREE + 1];
     complex double root, result[MAX_DEGREE + 1],
-      remainder[MAX_DEGREE + 1];
+      *remainder;
     double tempImag, tempReal;
     //set vars
     printf("Enter the degree of the polynomial: ");

@@ -30,12 +30,15 @@ complex double df(complex double x, complex double coeffs[], int degree)
 complex double newtonsMethod(complex double x, complex double coeffs[],
 			     int degree)
 {
-  complex double tolerance = 0.0001 + .0001*I;
+  complex double tolerance = 0.0001 + .0001*I,
+	  result[degree+1];
   int i = 0;
-  double fVal, dfVal;
+  complex double fVal, dfVal;
   do{
-      fVal  =  f(x, coeffs, degree);
-      dfVal = df(x, coeffs, degree);
+      syntheticDivide(coeffs, degree,x, result, &fVal);
+      syntheticDivide(result, degree,x, result, &dfVal);
+      //fVal  =  f(x, coeffs, degree);
+      //dfVal = df(x, coeffs, degree);
       x = x - (fVal/ dfVal);
       i++;	
     } while (i < 50);//((fVal) > cabs(tolerance));
