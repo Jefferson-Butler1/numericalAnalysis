@@ -1,6 +1,6 @@
 #include <complex.h>
 #include <math.h>
-
+#include "syntheticDivide.h"
 #ifndef NEWTONS_METHOD_H
 #define NEWTONS_METHOD_H
 #include <unistd.h>

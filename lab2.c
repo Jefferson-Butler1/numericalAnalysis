@@ -1,10 +1,8 @@
 #include "imports.c"
 #include "syntheticDivide.h"
 #include "newtonsMethod.h"
-
 #define MAX_DEGREE 20
 #define TOLERANCE 0.0001
-
 int main()
 {
     //initioalize vars
@@ -16,7 +14,6 @@ int main()
     //set vars
     printf("Enter the degree of the polynomial: ");
     scanf("%d", &degree);
-
     printf("Enter the coefficients of the polynomial:\n");
     for (i = degree; i >= 0; i--){
 	scanf("%lf",&tempReal);
@@ -24,18 +21,11 @@ int main()
     }
     //solve problem
     for (i = degree; i > 0; i--){
-/*
-	for(int j = degree; j >= 0; j--){
-	  printf("%lfx^%d ", creal(poly[j]), j);
-	}printf("\n");
-*/
-	root = newtonsMethod(1+1*I, poly, degree);
+	root = newtonsMethod(1, poly, degree);
         syntheticDivide(poly, degree, root, result, remainder);
-
         for (int j = 0; j <= degree; j++){
             poly[j] = result[j];
         }
-//	degree--;
         printf("Root %d: %8.6lf + %8.6lfi\n",
 	       i, creal(root), cimag(root));
     }
