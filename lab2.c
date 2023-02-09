@@ -7,11 +7,13 @@
 
 int main()
 {
+    //initioalize vars
     int degree, i;
     complex double poly[MAX_DEGREE + 1];
     complex double root, result[MAX_DEGREE + 1],
       remainder[MAX_DEGREE + 1];
     double tempImag, tempReal;
+    //set vars
     printf("Enter the degree of the polynomial: ");
     scanf("%d", &degree);
 
@@ -20,22 +22,21 @@ int main()
 	scanf("%lf",&tempReal);
 	poly[i] = tempReal + 0 * I;
     }
-
-    for (i = 1; i <= degree; i++)
-    {
-/*	for(int j = 0; j <= degree; j++){
+    //solve problem
+    for (i = degree; i > 0; i--){
+/*
+	for(int j = degree; j >= 0; j--){
 	  printf("%lfx^%d ", creal(poly[j]), j);
-	}
-	printf("\n");
+	}printf("\n");
 */
-	root = newtonsMethod(1, poly, degree, TOLERANCE);
+	root = newtonsMethod(1+1*I, poly, degree);
         syntheticDivide(poly, degree, root, result, remainder);
 
         for (int j = 0; j <= degree; j++){
             poly[j] = result[j];
         }
-        printf("Root %d: %4.2lf + %4.2lfi\n",
+//	degree--;
+        printf("Root %d: %8.6lf + %8.6lfi\n",
 	       i, creal(root), cimag(root));
     }
-    return 0;
 }

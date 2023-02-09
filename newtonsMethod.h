@@ -21,7 +21,6 @@ complex double df(complex double x, complex double coeffs[], int degree)
 {
   complex double result = 0;
   int i;
-
   for (i = 1; i <= degree; i++){
       result = result + pow(x,i-1) * i * coeffs[i];
     }
@@ -29,19 +28,17 @@ complex double df(complex double x, complex double coeffs[], int degree)
 }
 
 complex double newtonsMethod(complex double x, complex double coeffs[],
-			     int degree, double tolerance)
+			     int degree)
 {
-  complex double x1;
+  complex double tolerance = 0.0001 + .0001*I;
   int i = 0;
   double fVal, dfVal;
-  do
-    {
+  do{
       fVal  =  f(x, coeffs, degree);
       dfVal = df(x, coeffs, degree);
       x = x - (fVal/ dfVal);
       i++;	
-    } while (cabs(fVal) > tolerance);
-
+    } while (i < 50);//((fVal) > cabs(tolerance));
   return x;
 }
 
