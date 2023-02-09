@@ -1,0 +1,33 @@
+#ifndef SYNTHETIC_DIVIDE_H
+#define SYNTHETIC_DIVIDE_H
+
+#include <complex.h>
+
+#define MAX_DEGREE 20
+
+void syntheticDivide(complex double poly[], int n, complex double constant, complex double result[], complex double remainder[])
+{
+    int i;
+    complex double temp[MAX_DEGREE + 1];
+
+    for (i = 0; i <= n; i++)
+    {
+        temp[i] = poly[i];
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        result[i] = temp[0] / constant;
+        temp[0] = 0;
+
+        for (int j = 1; j <= n - i; j++)
+        {
+            temp[j - 1] = result[i] * constant + temp[j];
+        }
+    }
+
+    result[n] = temp[0];
+    remainder[0] = 0;
+}
+
+#endif

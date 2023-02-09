@@ -1,0 +1,51 @@
+#ifndef COMPLEX_H
+#include <complex.h>
+#endif
+
+#ifndef NEWTONS_METHOD_H
+#define NEWTONS_METHOD_H
+
+
+complex double f(complex double x, complex double coeffs[], int n)
+{
+    complex double result = 0;
+    int i;
+
+    for (i = 0; i <= n; i++)
+    {
+        result = result + x * coeffs[i];
+    }
+
+    return result;
+}
+
+complex double df(complex double x, complex double coeffs[], int n)
+{
+    complex double result = 0;
+    int i;
+
+    for (i = 1; i <= n; i++)
+    {
+        result = result + x * i * coeffs[i];
+    }
+
+    return result;
+}
+
+complex double newtonsMethod(complex double x0, complex double coeffs[], int n, double tolerance)
+{
+    printf("%lf + %lfI\n", creal(x0), cimag(x0));
+    complex double x1;
+    int i = 0; 
+    do
+    {
+        x1 = x0 - f(x0, coeffs, n) / df(x0, coeffs, n);
+        x0 = x1;
+    	i++;	
+	printf("%2d: %lf + %lfI\n", i, creal(x0), cimag(x0));
+    } while (cabs(f(x1, coeffs, n)) > tolerance);
+
+    return x1;
+}
+
+#endif
