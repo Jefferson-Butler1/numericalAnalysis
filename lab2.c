@@ -21,7 +21,7 @@ int main()
     }
     //solve problem
     for (i = degree; i > 0; i--){
-	root = newtonsMethod(1+ 1*I, poly, degree);
+	root = newtonsMethod(1+ 2*I, poly, degree);
         syntheticDivide(poly, degree, root, result, remainder);
         for (int j = 0; j <= degree; j++){
             poly[j] = result[j];
