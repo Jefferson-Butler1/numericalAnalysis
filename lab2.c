@@ -5,7 +5,7 @@
 #define TOLERANCE 0.0001
 int main()
 {
-    //initioalize vars
+    //initialize vars
     int degree, i;
     complex double poly[MAX_DEGREE + 1];
     complex double root, result[MAX_DEGREE + 1],
