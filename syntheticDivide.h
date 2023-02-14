@@ -16,7 +16,6 @@ void syntheticDivide(complex double poly[], int degree,
 	temp[i] = temp[i] + constant * temp[i+1];
     }
     *remainder = temp[0];
-    printf("remainder: %lf\n", creal(*remainder));
     for(int i = 0; i < degree; i++){
 	result[i] = temp[i+1];
     }
