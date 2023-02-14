@@ -11,6 +11,7 @@ void syntheticDivide(complex double poly[], int degree,
     complex double temp[MAX_DEGREE + 1];
     for (i = 0; i <= degree; i++){
         temp[i] = poly[i];
+	result[i] = 0;
     }
     for(i = degree-1; i >= 0; i --){
 	temp[i] = temp[i] + constant * temp[i+1];
