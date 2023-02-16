@@ -17,7 +17,7 @@ complex double newtonsMethod(complex double x, complex double coeffs[],
       syntheticDivide(result, degree,x, result, &dfVal);
       x = x - (fVal/ dfVal);
       i++;	
-    } while (i < 50);//((fVal) > cabs(tolerance));
+    } while (i < 5000);//((fVal) > cabs(tolerance));
   return x;
 }
 
