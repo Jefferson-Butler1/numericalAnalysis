@@ -69,19 +69,57 @@ void makeTriangle(double * matrix[], int rows) {
 	}
     }
 }
+void solvSystem1(double **matrix, int rows) {
+    printf("Made it to solv\n");
+    int cols = rows + 1; // one more column than row
+    int lead = 0; // index of leading variable
+
+    for (int r = 0; r < rows; r++) { // for each row
+        if (lead >= cols) {
+            break; // no more columns to pivot
+        }
+        int i = r;
+        while (matrix[i][lead] == 0.0) {
+            i++;
+            if (i == rows) {
+                i = r;
+                lead++;
+                if (lead == cols) {
+                    break; // no more columns to pivot
+                }
+            }
+        }
+        // swap rows i and r
+        double *temp = matrix[i];
+        matrix[i] = matrix[r];
+        matrix[r] = temp;
+
+        // scale pivot row
+        double pivot = matrix[r][lead];
+        if (pivot != 1.0) {
+            for (int j = lead; j < cols; j++) {
+                matrix[r][j] /= pivot;
+            }
+        }
+
+        // eliminate other rows
+        for (int k = 0; k < rows; k++) {
+            if (k != r) {
+                double factor = matrix[k][lead];
+                for (int j = lead; j < cols; j++) {
+                    matrix[k][j] -= factor * matrix[r][j];
+                }
+            }
+        }
+        lead++;
+    }
+}
 void scanRandom(double **matrix, int rows) {
     srand(time(NULL));
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < rows +1; j++) {
             matrix[i][j] = (double) (rand() % 10);
         }
-    }
-}
-void scanFile(double ** matrix, int rows, FILE *file){
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < rows +1; j++) {
-	    fscanf(file, "%lf", &matrix[i][j]);
-	}
     }
 }
 
@@ -103,36 +141,30 @@ int printm(double **matrix, int size) {
 
 int solvTriangle(double **matrix, int rows){
     int cols = rows + 1;
-    for(int r = rows-2; r >= 0; r -- )
-	for(int i = r; i >=0; i--)
+    for(int r = rows-2; r >= 0; r -- ){
+	for(int i = r; i >=0; i--){
 	    rowAdd(matrix[i], rows + 1, matrix[r+1], -matrix[i][r+1]);	
+	}
+    }
     return 0;
 }
 
-int main(int argc, char ** argv) {
+int main() {
     int n;
-    FILE* in; 
     char method[2];
-    if(argc > 1){
-	printf("Scanning from file %4s\n", argv[1]);
-	in = fopen(argv[1], "r");
-	method[0] = 'f';
-	fscanf(in,"%d\n", &n);
-    }else{
-        printf("Enter the size of the matrix: ");
-        scanf("%d", &n);
-        printf("enter 'm' if you wish to enter a square matrix, or\n's' if you wish to enter a triangular matrix\n");
-        scanf("%s", method);
-    }
+    printf("Enter the size of the matrix: ");
+    scanf("%d", &n);
+
     double **matrix = (double **)malloc(n * sizeof(double *));
     for (int i = 0; i < n; i++) {
         matrix[i] = (double *)malloc((n+1) * sizeof(double));
     }
+    printf("enter 'm' if you wish to enter a square matrix, or\n's' if you wish to enter a triangular matrix\n");
+    scanf("%s", method);
     
     if     (method[0] == 't') scanRandom(matrix, n);
     else if(method[0] == 'm') scanMatrix(matrix, n); 
     else if(method[0] == 's') scanSystem(matrix, n); 
-    else if(method[0] == 'f') scanFile(matrix, n, in);
     else {fprintf(stderr, "no method selected"); exit(1);}
     printf("matrix stored\n");
     
