@@ -63,6 +63,12 @@ void makeTriangle(double * matrix[], int rows) {
     }
     for(int r = 0; r < rows; r ++){
 	rowScl(matrix[r], cols, 1/matrix[r][r]);
+	
+        if(matrix[r][r] == 0){
+	    for(int i = 1; i < rows; i++){
+	        if(matrix[i][r] != 0) rowSwp(matrix[r], matrix[i]);
+	    }
+        }
 	for(int l = r + 1; l < rows; l++){
 	    if(l > rows) break ;
 	    rowAdd(matrix[l], cols, matrix[r], -matrix[l][r]);
