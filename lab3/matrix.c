@@ -4,6 +4,7 @@
 #include <time.h>
 #include <math.h>
 int printm(double **matrix, int size);
+
 int scanSystem(double **matrix, int rows) {
     int cols = rows + 1; // one more column than row
     for (int i = 0; i < rows; i++) {
@@ -52,45 +53,37 @@ int rowScl(double * row, int cols, double scale){
 void makeTriangle(double * matrix[], int rows) {
     int cols = rows + 1;
     //get to upper triangle
-    if(matrix[0][0] == 0){
-	for(int i = 1; i < rows; i++){
-	    if(matrix[i][0] != 0) rowSwp(matrix[0], matrix[i]);
-	}
-    }
-    if(matrix[0][0] == 0){
-	    fprintf(stderr, "invalid matrix\n");
-	    exit(1);
-    }
     for(int r = 0; r < rows; r ++){
+        if(matrix[r][r] == 0)
+	    for(int i = 1; i < rows; i++)
+	        if(matrix[i][r] != 0) 
+		    rowSwp(matrix[r], matrix[i]);
 	rowScl(matrix[r], cols, 1/matrix[r][r]);
-	
-        if(matrix[r][r] == 0){
-	    for(int i = 1; i < rows; i++){
-	        if(matrix[i][r] != 0) rowSwp(matrix[r], matrix[i]);
-	    }
-        }
 	for(int l = r + 1; l < rows; l++){
 	    if(l > rows) break ;
 	    rowAdd(matrix[l], cols, matrix[r], -matrix[l][r]);
 	}
     }
 }
+
+int solvTriangle(double **matrix, int rows, double* sols){
+    int cols = rows + 1;
+    for(int r = rows-2; r >= 0; r -- )
+	for(int i = r; i >= 0; i--)
+	    rowAdd(matrix[i], rows + 1, matrix[r+1], -matrix[i][r+1]);	
+    return 0;
+}
 void scanRandom(double **matrix, int rows) {
     srand(time(NULL));
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < rows +1; j++) {
+    for (int i = 0; i < rows; i++) 
+        for (int j = 0; j < rows +1; j++) 
             matrix[i][j] = (double) (rand() % 10);
-        }
-    }
 }
 void scanFile(double ** matrix, int rows, FILE *file){
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < rows +1; j++) {
+    for (int i = 0; i < rows; i++) 
+        for (int j = 0; j < rows +1; j++) 
 	    fscanf(file, "%lf", &matrix[i][j]);
-	}
-    }
 }
-
 
 int printm(double **matrix, int size) {
     if (matrix == NULL) {
@@ -98,20 +91,10 @@ int printm(double **matrix, int size) {
         return 1; // matrix pointer is null
     }
     for (int i = 0; i < size; i++) {
-        for (int j = 0; j <= size; j++) {
-            printf("\t%5.2f ", matrix[i][j]);
-        }
+        for (int j = 0; j <= size; j++) printf("\t%5.2f ", matrix[i][j]);
         printf("\n");
     }
     printf("\n");
-    return 0;
-}
-
-int solvTriangle(double **matrix, int rows){
-    int cols = rows + 1;
-    for(int r = rows-2; r >= 0; r -- )
-	for(int i = r; i >=0; i--)
-	    rowAdd(matrix[i], rows + 1, matrix[r+1], -matrix[i][r+1]);	
     return 0;
 }
 
@@ -131,9 +114,8 @@ int main(int argc, char ** argv) {
         scanf("%s", method);
     }
     double **matrix = (double **)malloc(n * sizeof(double *));
-    for (int i = 0; i < n; i++) {
-        matrix[i] = (double *)malloc((n+1) * sizeof(double));
-    }
+    for (int i = 0; i < n; i++) matrix[i] = (double *)malloc((n+1) * sizeof(double));
+    double * sols = (double *)malloc(n * sizeof(double));
     
     if     (method[0] == 't') scanRandom(matrix, n);
     else if(method[0] == 'm') scanMatrix(matrix, n); 
@@ -145,13 +127,14 @@ int main(int argc, char ** argv) {
     printm(matrix, n);
     makeTriangle(matrix, n);
     printm(matrix, n);
-    solvTriangle(matrix, n);
+    solvTriangle(matrix, n, sols);
     printm(matrix, n); 
-    // free memory
-    for (int i = 0; i < n; i++) {
-        free(matrix[i]);
+    for(int i = 0; i < n; i++){
+	printf("%6lf\t", sols[i]);
     }
+    printf("\n");
+    // free memory
+    for (int i = 0; i < n; i++) free(matrix[i]);
     free(matrix);
-
     return 0;
 }
