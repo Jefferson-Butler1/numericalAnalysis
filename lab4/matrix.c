@@ -4,7 +4,37 @@
 #include <time.h>
 #include <math.h>
 int printm(double **matrix, int size);
-int scanSystem(double **matrix, int rows) {
+int gaussSeidel(double **matrix, int rows, double *sols){
+	double x1,x2,x3,x4;		
+	for(int i = 0; i < rows; i++){
+		printf("%lf", sols[i]);
+	}
+	return(0);
+	x1 = x2 = x3 = x4 = 0;
+	for(int i = 1; i < 15; i++){
+		/*
+		for(int r = 0; r < rows; r++){
+			sols[r] = matrix[r][rows+1];
+			for(int c = 0; c < rows; c++){
+				if(c == r) continue;
+				sols[r] -= sols[c]*matrix[r][c];
+			}
+			sols[r] /= matrix[r][r];
+		}*/
+		sols[0] = (498 - 0*sols[0] - 5*sols[1] - 8*sols[2] + 2*sols[3])/100;	
+		sols[1] = (834 - 4*sols[0] - 0*sols[1] - 2*sols[2] - 6*sols[3])/200;	
+		sols[2] = (  6 - 2*sols[0] - 1*sols[1] - 0*sols[2] - 4*sols[3])/10;	
+		x1 = (498 - 0*x1 - 5 *x2 -8 *x3 + 2*x4)/100;
+		x2 = (834 - 4*x1 - 0 *x2 -2 *x3 - 6*x4)/200;
+		x3 = (6   - 2*x1 - 1 *x2 -0 *x3 - 4*x4)/10;
+		x4 = (255 - 5*x1 - 15*x2 +10*x3 - 0*x4)/50;
+	}
+	printf("%20.16lf\t%20.16lf\t%20.16lf\t%20.16lf\t\n",
+		x1,x2,x3,x4);	
+	printf("%20.16lf\t%20.16lf\t%20.16lf\t%20.16lf\t\n",
+		sols[0], sols[1], sols[2], sols[3]);	
+}
+int scanSystem (double **matrix, int rows) {
     int cols = rows + 1; // one more column than row
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
@@ -52,45 +82,37 @@ int rowScl(double * row, int cols, double scale){
 void makeTriangle(double * matrix[], int rows) {
     int cols = rows + 1;
     //get to upper triangle
-    if(matrix[0][0] == 0){
-	for(int i = 1; i < rows; i++){
-	    if(matrix[i][0] != 0) rowSwp(matrix[0], matrix[i]);
-	}
-    }
-    if(matrix[0][0] == 0){
-	    fprintf(stderr, "invalid matrix\n");
-	    exit(1);
-    }
     for(int r = 0; r < rows; r ++){
+        if(matrix[r][r] == 0)
+	    for(int i = 1; i < rows; i++)
+	        if(matrix[i][r] != 0) 
+		    rowSwp(matrix[r], matrix[i]);
 	rowScl(matrix[r], cols, 1/matrix[r][r]);
-	
-        if(matrix[r][r] == 0){
-	    for(int i = 1; i < rows; i++){
-	        if(matrix[i][r] != 0) rowSwp(matrix[r], matrix[i]);
-	    }
-        }
 	for(int l = r + 1; l < rows; l++){
 	    if(l > rows) break ;
 	    rowAdd(matrix[l], cols, matrix[r], -matrix[l][r]);
 	}
     }
 }
+
+int solvTriangle(double **matrix, int rows, double* sols){
+    int cols = rows + 1;
+    for(int r = rows-2; r >= 0; r -- )
+	for(int i = r; i >= 0; i--)
+	    rowAdd(matrix[i], rows + 1, matrix[r+1], -matrix[i][r+1]);	
+    return 0;
+}
 void scanRandom(double **matrix, int rows) {
     srand(time(NULL));
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < rows +1; j++) {
+    for (int i = 0; i < rows; i++) 
+        for (int j = 0; j < rows +1; j++) 
             matrix[i][j] = (double) (rand() % 10);
-        }
-    }
 }
 void scanFile(double ** matrix, int rows, FILE *file){
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < rows +1; j++) {
+    for (int i = 0; i < rows; i++) 
+        for (int j = 0; j < rows +1; j++) 
 	    fscanf(file, "%lf", &matrix[i][j]);
-	}
-    }
 }
-
 
 int printm(double **matrix, int size) {
     if (matrix == NULL) {
@@ -98,20 +120,10 @@ int printm(double **matrix, int size) {
         return 1; // matrix pointer is null
     }
     for (int i = 0; i < size; i++) {
-        for (int j = 0; j <= size; j++) {
-            printf("\t%5.2f ", matrix[i][j]);
-        }
+        for (int j = 0; j <= size; j++) printf("\t%5.2f ", matrix[i][j]);
         printf("\n");
     }
     printf("\n");
-    return 0;
-}
-
-int solvTriangle(double **matrix, int rows){
-    int cols = rows + 1;
-    for(int r = rows-2; r >= 0; r -- )
-	for(int i = r; i >=0; i--)
-	    rowAdd(matrix[i], rows + 1, matrix[r+1], -matrix[i][r+1]);	
     return 0;
 }
 
@@ -131,10 +143,11 @@ int main(int argc, char ** argv) {
         scanf("%s", method);
     }
     double **matrix = (double **)malloc(n * sizeof(double *));
-    for (int i = 0; i < n; i++) {
-        matrix[i] = (double *)malloc((n+1) * sizeof(double));
+    for (int i = 0; i < n; i++) matrix[i] = (double *)malloc((n+1) * sizeof(double));
+    double * sols = (double *)malloc((n+0) * sizeof(double));
+    for(int i = 0; i < n; i++){
+	sols[i] = 0;
     }
-    
     if     (method[0] == 't') scanRandom(matrix, n);
     else if(method[0] == 'm') scanMatrix(matrix, n); 
     else if(method[0] == 's') scanSystem(matrix, n); 
@@ -142,16 +155,19 @@ int main(int argc, char ** argv) {
     else {fprintf(stderr, "no method selected"); exit(1);}
     printf("matrix stored\n");
     
-    printm(matrix, n);
-    makeTriangle(matrix, n);
-    printm(matrix, n);
-    solvTriangle(matrix, n);
-    printm(matrix, n); 
-    // free memory
-    for (int i = 0; i < n; i++) {
-        free(matrix[i]);
+    //printm(matrix, n);
+    //makeTriangle(matrix, n);
+    //printm(matrix, n);
+    //solvTriangle(matrix, n, sols);
+    //printm(matrix, n); 
+    //gaussSeidel(matrix, n, sols);
+    for(int i = 0; i < n; i++){
+	printf("%6lf\t", sols[i]);
     }
+    printf("\n");
+    // free memory
+    for (int i = 0; i < n; i++) free(matrix[i]);
     free(matrix);
-
+    free(sols);
     return 0;
 }
