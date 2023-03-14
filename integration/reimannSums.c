@@ -31,11 +31,6 @@ int main(){
 	printf("Your integral using Trapezoid is \t%lf\n", sumTrap);
 }
 
-
 double f(double x){
-	double y;
-	//different for different functions
-	y = 6*x*x + 4*x;
-	return y;
-
+	return  x*x*x*x + 4 * (x*x*x) + 6 * (x*x) - 8 * x + 1; 
 }
